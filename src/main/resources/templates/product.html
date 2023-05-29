@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>商品情報</title>
+</head>
+<body>
+<h2 th:text="#{product.lbl.title}"></h2>
+<span th:text="#{product.lbl.id}"></span><a th:text="${product.id}"></a><br><br>
+<span th:text="#{product.lbl.productName}"></span><a th:text="${product.name}"></a><br><br>
+<span th:text="#{product.lbl.price}"></span><a th:text="${product.price}"></a>
+<form th:action="@{/product/{id}(id=${product.id})}" method="post">
+  <p><button type="submit" th:text="#{product.btn.delete}"></button></p>
+</form>
+</body>
+</html>

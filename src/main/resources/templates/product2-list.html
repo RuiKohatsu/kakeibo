@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>商品一覧</title>
+
+</head>
+<body>
+<span id="message"></span>
+
+<div id ='maintable'></div><br>
+
+<style>
+  table{
+     /* 枠線を1本線指定 */
+      border: solid 1px;
+      border-collapse:  collapse;
+      white-space: nowrap;
+    }
+
+    th{
+      /* ヘッダ背景塗りつぶし */
+      background: #eee;
+    }
+   th,td {
+     /* 枠線を1本線指定 */
+      border: solid 1px;
+      width:auto;
+   }
+
+</style>
+<div id="detail"></div>
+<div id="newAdd-text"></div>
+<div id="name"></div>
+<div id="price"></div><br>
+<div id="add-Btn"></div>
+<script src="/js/product.js"></script>
+</body>
+</html>

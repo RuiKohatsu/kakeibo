@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border="1">
+  <tr>
+      <th><span th:text="#{product-list.lbl.idColumn}"></span></th>
+      <th><span th:text="#{product-list.lbl.nameColumn}"></span></th>
+      <th><span th:text="#{product-list.lbl.priceColumn}"></span></th>
+  </tr>
+  <tr th:each="product : ${products}">
+    <td><a th:href="@{'/product/' + ${product.id}}" th:text="${product.id}"></a></td>
+    <td th:text="${product.name}"></td>
+    <td th:text="${product.price}"></td>
+  </tr>
+</table>
+
+<form action="/product-add" method="get">
+    <p><button type="submit" th:text="#{product-list.btn.newAdd}"></button></p>
+</form>
+</body>
+</html>

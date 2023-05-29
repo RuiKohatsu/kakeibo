@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>商品追加</title>
+</head>
+<body>
+<h1><span th:text="#{product-add.lbl.title}"></span></h1>
+<form action="/product-add" method="post" th:object="${product}">
+  <span th:text="#{product.lbl.productName}"></span><input type="text" th:field="*{name}">
+  <span class="error" th:each="error: ${#fields.errors('name')}">
+    [[ ${error} ]]
+  </span><br><br>
+  <span th:text="#{product.lbl.price}"></span><input type="text" th:field="*{price}">
+  <span class="error" th:each="error: ${#fields.errors('price')}">
+    [[ ${error} ]]
+  </span>
+  <p><button type="submit" th:text="#{product-add.btn.add}"></button></p>
+</form>
+</body>
+</html>

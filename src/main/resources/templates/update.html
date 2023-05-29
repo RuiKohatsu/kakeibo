@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title><span th:text="#{product-list.lbl.title}"></span></title>
+</head>
+<body>
+<h1><span th:text="#{update.lbl.title}"></span></h1>
+id：<span th:text="${id}"></span>
+<form th:action="@{/update/{id}(id=${id})}" method="post" th:object="${product}">
+
+    <span th:text="#{product.lbl.productName}"></span><input type="text" th:field="*{name}">
+    <span class="error" th:each="error: ${#fields.errors('name')}">
+    [[ ${error} ]]
+  </span><br><br>
+    <span th:text="#{product.lbl.price}"></span><input type="text" th:field="*{price}">
+    <span class="error" th:each="error: ${#fields.errors('price')}">
+    [[ ${error} ]]
+  </span>
+    <p><button type="submit" th:text="#{update.btn.update}"></button></p>
+</form>
+</body>
+</html>
