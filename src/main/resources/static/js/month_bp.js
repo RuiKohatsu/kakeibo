@@ -69,13 +69,20 @@ function check(){
         alert("項目が選択されていません。");
       }
       else if(flag){
+        const userId = document.getElementById('selectBox').value;
         console.log(categories);
+        const object = {
+          userId : userId
+          ,categories : categories
+        }
+        console.log(object.userId);
+        console.log(object.categories);
         fetch(`/api/reflect`,{
           method: "POST",
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(categories)
+          body: JSON.stringify(object)
         })
           .then(res => {
             if(res.status === 400) {
@@ -91,6 +98,17 @@ function check(){
       }
     });
 
+}
+
+function createSelectBox(data){
+  selectBox = document.getElementById('selectBox');
+
+  for (var i = 0; i < data.length; i++) {
+    var option = document.createElement("option");
+    option.value = data[i].userId;
+    option.text = data[i].name;
+    selectBox.appendChild(option);
+  }
 }
 
 
@@ -188,6 +206,19 @@ window.onload = function() {
   };
 
 check();
+
+fetch(`/api/selectBox`)
+  .then(res => {
+    if(res.status === 400) {
+      document.getElementById('message').textContent = 'データを反映できませんでした';
+    } else {
+      res.json()
+      .then(data => {
+        document.getElementById('message').textContent = '';
+        createSelectBox(data);              
+      });
+    }
+});
 
 
 

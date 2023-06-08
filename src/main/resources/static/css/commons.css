@@ -410,17 +410,20 @@ h1 a {
       }
 
   /*　スクロールバーの実装 */
-  #Table {
+  .main_table {
       display: block;
       overflow-y: scroll;
       height: calc(100vh/2);
       /*border:1px solid;*/
       /*border-collapse: collapse;*/
   }
-  #Table thead th {
+  .main_table thead th {
       position: sticky;
       top: 0;
       z-index: 1;
       background: gold;
       border-top:#FFFFFF;
   }
+.user_select{
+    margin-left: 10px;
+}

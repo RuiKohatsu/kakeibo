@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ログイン</title>
+<link href="/css/commons.css" rel="stylesheet">
+</head>
+<body class="login-body">
+  <div class="header">
+    <h1 class="site_logo">商品管理システム</h1>
+  </div>
+
+  <div class="login-form">
+    <img src="images/logo.png" class="login-logo">
+    <p id="client" class="error">エラーメッセージ</p>
+
+    <form action="login" method="post">
+      <fieldset>
+        <div class="cp_iptxt">
+          <input id="userId" class="base-input" type="text" name="loginId" placeholder="ID">
+          <div id="idError" class="error">エラーメッセージ</div>
+        </div>
+
+        <div>
+          <input id="userPass" class="base-input" type="password" name="pass" placeholder="PASS">
+          <div id="passError" class="error">エラーメッセージ</div>
+        </div>
+      </fieldset>
+      <button id="login-btn" class="custom-btn" type="button">
+          ログイン
+      </button>
+    </form>
+  </div>
+  <script src="/js/login.js"></script>
+</body>
+</html>

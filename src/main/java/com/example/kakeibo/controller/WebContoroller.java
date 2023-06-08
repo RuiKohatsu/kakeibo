@@ -33,7 +33,10 @@ public class WebContoroller {
     }
 
     @GetMapping("/insert")
-    public String insert(@ModelAttribute("BpInsert") BpInsert bpInsert) {
+    public String insert(@ModelAttribute("BpInsert") BpInsert bpInsert, Model model) {
+        System.out.println("insert実行");
+        var userList = bpService.userAll();
+        model.addAttribute("userList", userList);
         return "insert";
     }
 
@@ -43,7 +46,8 @@ public class WebContoroller {
         if(bindingResult.hasErrors()) {
             return "/insert";
         }
-        System.out.println(bpInsert.getDate());
+        System.out.println(bpInsert);
+
         bpService.insert(bpInsert);
         return "redirect:/menu";
     }
@@ -51,6 +55,11 @@ public class WebContoroller {
 
     @GetMapping("/month_bp")
     public String monthBp(Model model){
+        var userList = bpService.userAll();
+        for(var user : userList){
+            System.out.println(user);
+        }
+        model.addAttribute("userList", userList);
         var list = bpService.monthBp();
         model.addAttribute("rows", list);
         return "/month_bp";

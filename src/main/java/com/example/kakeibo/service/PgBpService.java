@@ -2,9 +2,7 @@ package com.example.kakeibo.service;
 
 import com.example.kakeibo.NotFoundException;
 import com.example.kakeibo.dao.BpDao;
-import com.example.kakeibo.entity.Bp;
-import com.example.kakeibo.entity.BpInsert;
-import com.example.kakeibo.entity.BpUpdate;
+import com.example.kakeibo.entity.*;
 import com.example.kakeibo.record.BpRecord;
 import com.example.kakeibo.record.MonthBp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,10 @@ public class PgBpService implements BpService {
     @Autowired
     private BpDao bpDao;
 
+    @Override
+    public User loginCheck(String id, String pass){
+        return bpDao.loginCheck(id, pass);
+    }
 
     @Override
     public List<BpRecord> findAll() {
@@ -50,10 +52,10 @@ public class PgBpService implements BpService {
     }
 
     @Override
-    public List<MonthBp> monthBpCategory(Integer[] categories) {
+    public List<MonthBp> monthBpCategory(UserCategories userCategories) {
         // 本来は、例外処理が必要
         System.out.println("service");
-        return bpDao.monthBpCategory(categories);
+        return bpDao.monthBpCategory(userCategories);
     }
 
     @Override
@@ -72,5 +74,10 @@ public class PgBpService implements BpService {
     public int update(BpUpdate bp) {
         // 本来は、例外処理が必要
         return bpDao.update(bp);
+    }
+
+    @Override
+    public List<User> userAll(){
+        return bpDao.userAll();
     }
 }

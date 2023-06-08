@@ -1,14 +1,13 @@
 package com.example.kakeibo.dao;
 
-import com.example.kakeibo.entity.Bp;
-import com.example.kakeibo.entity.BpInsert;
-import com.example.kakeibo.entity.BpUpdate;
+import com.example.kakeibo.entity.*;
 import com.example.kakeibo.record.BpRecord;
 import com.example.kakeibo.record.MonthBp;
 
 import java.util.List;
 
 public interface BpDao {
+    User loginCheck(String id, String pass);
     List<BpRecord> findAll();
 
     Bp findById(int rowId);
@@ -17,12 +16,14 @@ public interface BpDao {
 
     List<MonthBp> monthBp();
 
-    List<MonthBp> monthBpCategory(Integer[] categories);
+    List<MonthBp> monthBpCategory(UserCategories userCategories);
 
     int delete(int id);
 
     int categoryId(int id);
 
     int update(BpUpdate bp);
+
+    List<User> userAll();
 
 }

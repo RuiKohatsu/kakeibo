@@ -1,8 +1,6 @@
 package com.example.kakeibo.dao;
 
-import com.example.kakeibo.entity.Bp;
-import com.example.kakeibo.entity.BpInsert;
-import com.example.kakeibo.entity.BpUpdate;
+import com.example.kakeibo.entity.*;
 import com.example.kakeibo.record.BpRecord;
 import com.example.kakeibo.record.MonthBp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +17,22 @@ public class PgBpDao implements BpDao {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     @Override
+    public User loginCheck(String id, String pass) {
+        MapSqlParameterSource param = new MapSqlParameterSource();
+        param.addValue("id", id);
+        param.addValue("password", pass);
+        var user = jdbcTemplate.query("SELECT name, role FROM users WHERE login_id = :id AND password = :password", param, new DataClassRowMapper<>(User.class));
+        return user.isEmpty() ? null : user.get(0);
+    }
+
+    @Override
     public List<BpRecord> findAll() {
-        return jdbcTemplate.query("SELECT bp.id id, date, outin outIn, category , amount, explain " +
+        return jdbcTemplate.query("SELECT bp.id id, date, outin outIn, category , amount, name, explain " +
                         "FROM bp " +
                         "LEFT JOIN categories c " +
                         "ON bp.category_id = c.id " +
+                        "JOIN users u " +
+                        "ON bp.user_id = u.user_id " +
                         "ORDER BY date DESC " +
                         "limit 100",
                 new DataClassRowMapper<>(BpRecord.class));
@@ -43,7 +52,7 @@ public class PgBpDao implements BpDao {
 
     @Override
     public int insert(BpInsert bpInsert) {
-        MapSqlParameterSource param = new MapSqlParameterSource();
+        MapSqlParameterSource param1 = new MapSqlParameterSource();
         java.sql.Date date = java.sql.Date.valueOf(bpInsert.getDate());
 
         Integer categoryId;
@@ -53,15 +62,16 @@ public class PgBpDao implements BpDao {
             categoryId = bpInsert.getCategoryId();
         }
 
-        param.addValue("date", date);
-        param.addValue("outIn", bpInsert.getOutIn());
-        param.addValue("categoryId", categoryId);
-        param.addValue("amount", bpInsert.getAmount());
-        param.addValue("explain", bpInsert.getExplain());
+        param1.addValue("date", date);
+        param1.addValue("outIn", bpInsert.getOutIn());
+        param1.addValue("categoryId", categoryId);
+        param1.addValue("amount", bpInsert.getAmount());
+        param1.addValue("explain", bpInsert.getExplain());
+        param1.addValue("userId", bpInsert.getUserId());
 
         return jdbcTemplate.update("INSERT " +
-                "INTO bp(date, outin, category_id, amount, explain) " +
-                "VALUES(:date, :outIn, :categoryId, :amount, :explain)", param);
+                "INTO bp(date, outin, category_id, amount, explain, user_id) " +
+                "VALUES(:date, :outIn, :categoryId, :amount, :explain, :userId)", param1);
     }
 
     @Override
@@ -77,19 +87,24 @@ public class PgBpDao implements BpDao {
     }
 
     @Override
-    public List<MonthBp> monthBpCategory(Integer[] categories) {
+    public List<MonthBp> monthBpCategory(UserCategories userCategories) {
     System.out.println("dao");
+    var userId = userCategories.getUserId();
+    var categories = userCategories.getCategories();
+    System.out.println("ユーザーID"+userId);
+    System.out.println("カテゴリ"+categories);
 
-        for(int element : categories){
-            if(element == 0){
+        for(int category : categories){
+            if(userId.equals("1") && category == 0){
                 var result = jdbcTemplate.query("SELECT to_char(date, 'YYYY-MM') AS date, " +
                                 "SUM(CASE WHEN outin = '収入' THEN amount ELSE 0 END) AS income, " +
                                 "SUM(CASE WHEN outin = '支出' THEN amount ELSE 0 END) AS expense, " +
                                 "SUM(CASE WHEN outin = '収入' THEN amount ELSE -amount END) AS difference " +
-                                "FROM BP " +
+                                "FROM bp " +
                                 "GROUP BY to_char(date, 'YYYY-MM') " +
                                 "ORDER BY to_char(date, 'YYYY-MM')",
                         new DataClassRowMapper<>(MonthBp.class));
+                System.out.println("共通・総支出");
                 for(var str : result){
                     System.out.println(str);
                 }
@@ -98,23 +113,69 @@ public class PgBpDao implements BpDao {
         }
 
 
-        MapSqlParameterSource param = new MapSqlParameterSource();
-        param.addValue("categories", categories);
+        if(userId.equals("1")){
+            System.out.println("共通・カテゴリ");
+            MapSqlParameterSource param = new MapSqlParameterSource();
+            param.addValue("userId", userId);
+            param.addValue("categories", categories);
 
-        String query = "SELECT to_char(date, 'YYYY-MM') AS date, " +
-                "SUM(CASE WHEN outin = '収入' THEN amount ELSE 0 END) AS income, " +
-                "SUM(CASE WHEN outin = '支出' THEN amount ELSE 0 END) AS expense, " +
-                "SUM(CASE WHEN outin = '収入' THEN amount ELSE -amount END) AS difference " +
-                "FROM BP " +
-                "WHERE category_id = ANY(:categories) OR outin = '収入' " +
-                "GROUP BY to_char(date, 'YYYY-MM') " +
-                "ORDER BY to_char(date, 'YYYY-MM')";
-        List<MonthBp> result = jdbcTemplate.query(query, param, new DataClassRowMapper<>(MonthBp.class));
+            String query = "SELECT to_char(date, 'YYYY-MM') AS date, " +
+                    "SUM(CASE WHEN outin = '収入' THEN amount ELSE 0 END) AS income, " +
+                    "SUM(CASE WHEN outin = '支出' THEN amount ELSE 0 END) AS expense, " +
+                    "SUM(CASE WHEN outin = '収入' THEN amount ELSE -amount END) AS difference " +
+                    "FROM BP " +
+                    "WHERE category_id = ANY(:categories) OR outin = '収入' " +
+                    "GROUP BY to_char(date, 'YYYY-MM') " +
+                    "ORDER BY to_char(date, 'YYYY-MM')";
+            List<MonthBp> result = jdbcTemplate.query(query, param, new DataClassRowMapper<>(MonthBp.class));
 
-        for(var str : result){
-            System.out.println(str);
+            for(var str : result){
+                System.out.println(str);
+            }
+            return result;
+        }else{
+            for(int category : categories) {
+                if(category == 0) {
+                    MapSqlParameterSource param = new MapSqlParameterSource();
+                    param.addValue("userId", userId);
+
+                    String query = "SELECT to_char(date, 'YYYY-MM') AS date, " +
+                            "SUM(CASE WHEN outin = '収入' THEN amount ELSE 0 END) AS income, " +
+                            "SUM(CASE WHEN outin = '支出' THEN amount ELSE 0 END) AS expense, " +
+                            "SUM(CASE WHEN outin = '収入' THEN amount ELSE -amount END) AS difference " +
+                            "FROM BP " +
+                            "WHERE user_id = :userId " +
+                            "GROUP BY to_char(date, 'YYYY-MM') " +
+                            "ORDER BY to_char(date, 'YYYY-MM')";
+                    List<MonthBp> result = jdbcTemplate.query(query, param, new DataClassRowMapper<>(MonthBp.class));
+                    System.out.println("ユーザー・総支出");
+                    for (var str : result) {
+                        System.out.println(str);
+                    }
+                    return result;
+                }
+            }
+
+            MapSqlParameterSource param = new MapSqlParameterSource();
+            param.addValue("categories", categories);
+            param.addValue("userId", userId);
+
+            String query = "SELECT to_char(date, 'YYYY-MM') AS date, " +
+                    "SUM(CASE WHEN outin = '収入' THEN amount ELSE 0 END) AS income, " +
+                    "SUM(CASE WHEN outin = '支出' THEN amount ELSE 0 END) AS expense, " +
+                    "SUM(CASE WHEN outin = '収入' THEN amount ELSE -amount END) AS difference " +
+                    "FROM BP " +
+                    "WHERE category_id = ANY(:categories) AND user_id = :userId OR user_id = :userId AND outin = '収入' " +
+                    "GROUP BY to_char(date, 'YYYY-MM') " +
+                    "ORDER BY to_char(date, 'YYYY-MM')";
+            List<MonthBp> result = jdbcTemplate.query(query, param, new DataClassRowMapper<>(MonthBp.class));
+            System.out.println("ユーザー・カテゴリ");
+            for (var str : result) {
+                System.out.println(str);
+            }
+            return result;
         }
-        return result;
+
     }
 
     @Override
@@ -180,7 +241,14 @@ public class PgBpDao implements BpDao {
                 "WHERE id = :id", param);
     }
 
-
+    @Override
+    public List<User> userAll(){
+        return jdbcTemplate.query("SELECT * " +
+                        "FROM users " +
+                        "ORDER BY id " +
+                        "limit 100",
+                new DataClassRowMapper<>(User.class));
+    }
 
 
 }

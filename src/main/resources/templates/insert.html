@@ -61,6 +61,10 @@
             <input type="text" name="amount" class="base-text"  th:field="*{amount}">
             <span class="error"></span>
           </div>
+          <label class="required">登録者(後でsession情報から登録できるようにする)</label>
+          <select name="userId" class="base-text" th:field="*{userId}">
+            <option th:each="user : ${userList}" th:value="${user.userId}" th:text="${user.name}"></option>
+          </select>
           <div>
             <label>備考</label>
             <textarea name="explain" class="base-text" th:field="*{explain}"></textarea>

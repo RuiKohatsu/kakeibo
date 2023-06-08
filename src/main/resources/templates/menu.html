@@ -40,13 +40,14 @@
 <!--      </div>-->
 <!--    </form>-->
 
-    <table id="Table">
+    <table id="Table" class="main_table">
 <!--        <div class="caption"><p>検索結果：10件</p></div>-->
         <tr>
           <th>日付</th>
           <th>収入/支出</th>
           <th>支出カテゴリ</th>
           <th>金額</th>
+          <th>登録者</th>
           <th>備考</th>
           <th>編集</th>
         </tr>
@@ -56,6 +57,7 @@
         <td th:text="${row.outIn}"></td>
         <td th:text="${row.category}"></td>
         <td th:text="${row.amount}"></td>
+        <td th:text="${row.name}"></td>
         <td th:text="${row.explain}"></td>
         <td><a class="detail_btn" th:href="@{/detail(id=${row.id})}">編集</a></td>
 　

@@ -6,8 +6,10 @@ import lombok.Data;
 public class BpInsert{
     public String date;
     public String outIn;
+
     public Integer categoryId;
     public Integer amount;
     public String explain;
+    public String userId;
 
 }
