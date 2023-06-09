@@ -19,28 +19,28 @@ public class RestWebController {
     @Autowired
     private HttpSession session;
 
-//    @PostMapping("/api/login")
-//    public int login(@RequestBody String[] inputData) {
-//        var id = inputData[0];
-//        var pass = inputData[1];
-//        if(id.equals("") && !pass.equals("")){
-//            return 0;
-//        }else if(!id.equals("") && pass.equals("")){
-//            return 1;
-//        }else if(id.equals("") && pass.equals("")){
-//            return 2;
-//        }else{
-//            var user = bpService.loginCheck(id, pass);
-//            if(user == null) {
-//                return 3;
-//            }else{
-//                var sessionUser = new User(user.getId(),user.getUserId(), user.getName(),user.getLoginId(),user.getPass());
-//                System.out.println(user.name);
-//                session.setAttribute("user", sessionUser);
-//                return 4;
-//            }
-//        }
-//    }
+    @PostMapping("/api/login")
+    public int login(@RequestBody String[] inputData) {
+        var id = inputData[0];
+        var pass = inputData[1];
+        if(id.equals("") && !pass.equals("")){
+            return 0;
+        }else if(!id.equals("") && pass.equals("")){
+            return 1;
+        }else if(id.equals("") && pass.equals("")){
+            return 2;
+        }else{
+            var user = bpService.loginCheck(id, pass);
+            if(user == null) {
+                return 3;
+            }else{
+                var sessionUser = new User(user.getId(),user.getUserId(), user.getName(),user.getLoginId(),user.getPass());
+                System.out.println(user.name);
+                session.setAttribute("user", sessionUser);
+                return 4;
+            }
+        }
+    }
 
     @PostMapping("/api/reflect")
     public List<MonthBp> monthCategory(@RequestBody UserCategories userCategories) {

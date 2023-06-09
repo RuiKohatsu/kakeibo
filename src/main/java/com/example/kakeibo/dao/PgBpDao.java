@@ -20,8 +20,8 @@ public class PgBpDao implements BpDao {
     public User loginCheck(String id, String pass) {
         MapSqlParameterSource param = new MapSqlParameterSource();
         param.addValue("id", id);
-        param.addValue("password", pass);
-        var user = jdbcTemplate.query("SELECT name, role FROM users WHERE login_id = :id AND password = :password", param, new DataClassRowMapper<>(User.class));
+        param.addValue("pass", pass);
+        var user = jdbcTemplate.query("SELECT * FROM users WHERE login_id = :id AND pass = :pass", param, new DataClassRowMapper<>(User.class));
         return user.isEmpty() ? null : user.get(0);
     }
 

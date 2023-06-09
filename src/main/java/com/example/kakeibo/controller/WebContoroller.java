@@ -4,6 +4,7 @@ import com.example.kakeibo.entity.Bp;
 import com.example.kakeibo.entity.BpInsert;
 import com.example.kakeibo.entity.BpUpdate;
 import com.example.kakeibo.service.BpService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class WebContoroller {
 
-//    @Autowired
-//    private HttpSession session;
+    @Autowired
+    private HttpSession session;
 
     @Autowired
     private BpService bpService;
@@ -27,6 +28,9 @@ public class WebContoroller {
 
     @GetMapping("/menu")
     public String check(Model model){
+        if (session.getAttribute("user") == null) {
+            return "redirect:/index";  // index.htmlにリダイレクトする場合
+        }
         var list = bpService.findAll();
         model.addAttribute("rows", list);
         return "/menu";
@@ -34,6 +38,9 @@ public class WebContoroller {
 
     @GetMapping("/insert")
     public String insert(@ModelAttribute("BpInsert") BpInsert bpInsert, Model model) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/index";  // index.htmlにリダイレクトする場合
+        }
         System.out.println("insert実行");
         var userList = bpService.userAll();
         model.addAttribute("userList", userList);
@@ -55,6 +62,9 @@ public class WebContoroller {
 
     @GetMapping("/month_bp")
     public String monthBp(Model model){
+        if (session.getAttribute("user") == null) {
+            return "redirect:/index";  // index.htmlにリダイレクトする場合
+        }
         var userList = bpService.userAll();
         for(var user : userList){
             System.out.println(user);
@@ -69,6 +79,9 @@ public class WebContoroller {
     public String detail(@ModelAttribute("bp") Bp bp
             , @RequestParam(name="id") int id
             , Model model) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/index";  // index.htmlにリダイレクトする場合
+        }
 
         var bp1= bpService.findById(id);
 
@@ -98,6 +111,9 @@ public class WebContoroller {
     @GetMapping("/updateInput")
     public String updateInput( @ModelAttribute("bp") BpUpdate bp
             , @RequestParam(name="id") int id) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/index";  // index.htmlにリダイレクトする場合
+        }
         var bp1= bpService.findById(id);
         var categoryId = bpService.categoryId(id);
 
